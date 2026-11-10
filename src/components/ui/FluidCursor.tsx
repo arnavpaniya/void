@@ -37,19 +37,11 @@ export function FluidCursor() {
       const isButton = target.closest("button") || target.closest("a");
       const isCard = target.closest("[data-cursor='card']") || target.closest(".group");
 
-      if (isCanvas) {
-        setIsHovered(true);
-        setCursorText("DRAG 360°");
-      } else if (isCard && !isButton) {
-        setIsHovered(true);
-        setCursorText("EXPLORE");
-      } else if (isButton) {
-        setIsHovered(true);
-        setCursorText("");
-      } else {
-        setIsHovered(false);
-        setCursorText("");
-      }
+      const targetHovered = !!(isCanvas || (isCard && !isButton) || isButton);
+      const targetText = isCanvas ? "DRAG 360°" : isCard && !isButton ? "EXPLORE" : "";
+
+      setIsHovered((prev) => (prev !== targetHovered ? targetHovered : prev));
+      setCursorText((prev) => (prev !== targetText ? targetText : prev));
     };
 
     const onMouseLeave = () => setIsVisible(false);

@@ -160,17 +160,10 @@ interface SpectatorData {
 }
 
 function PackedRunwayAudience() {
-  const flash1Ref = useRef<THREE.PointLight>(null);
-  const flash2Ref = useRef<THREE.PointLight>(null);
-  const flash3Ref = useRef<THREE.PointLight>(null);
-  const flash4Ref = useRef<THREE.PointLight>(null);
+  const flashRef = useRef<THREE.PointLight>(null);
+  const flashIntensity = useRef(0);
 
-  const flash1Intensity = useRef(0);
-  const flash2Intensity = useRef(0);
-  const flash3Intensity = useRef(0);
-  const flash4Intensity = useRef(0);
-
-  // Generate dense, realistic audience with 120+ people across 4 tiered rows per side
+  // Generate stylish front-row runway audience (optimized 54 spectators across 3 tiered rows)
   const spectators = useMemo(() => {
     const list: SpectatorData[] = [];
 
@@ -203,16 +196,6 @@ function PackedRunwayAudience() {
       "#482B1C", // Rich espresso
     ];
 
-    const lipColors = [
-      "#C48978",
-      "#B57666",
-      "#9E5F50",
-      "#784436",
-      "#5E3326",
-    ];
-
-    const eyeColors = ["#191614", "#2B211A", "#111111", "#1E272E"];
-
     const hairColors = [
       "#0D0C0C", // Jet black
       "#221913", // Dark espresso brown
@@ -222,128 +205,89 @@ function PackedRunwayAudience() {
       "#171717", // Raven
     ];
 
-    const hairStyles: ("crop" | "bun" | "bob" | "textured")[] = ["crop", "bun", "bob", "textured"];
-
     const phoneColors = ["#E0F2FE", "#FEF3C7", "#F1F5F9", "#FFFFFF"];
 
     const sides = [-1, 1];
 
     sides.forEach((side) => {
-      // Row 1: VIP Front Row — Seated right beside the runway
-      // X = side * 1.38, Y = -0.44
-      for (let z = -3.8; z <= 3.4; z += 0.42) {
-        const xPos = side * (1.36 + Math.random() * 0.06);
+      // Row 1: VIP Front Row — Seated directly beside the runway
+      for (let z = -3.6; z <= 3.2; z += 0.62) {
+        const xPos = side * (1.38 + (Math.random() - 0.5) * 0.04);
         const yPos = -0.44;
         const zPos = z + (Math.random() - 0.5) * 0.05;
-
-        // Angle faces and bodies toward center catwalk where model walks
-        const baseRotY = side > 0 ? -Math.PI / 2 - 0.25 : Math.PI / 2 + 0.25;
-        const skinIdx = Math.floor(Math.random() * skinTones.length);
-
-        list.push({
-          pos: [xPos, yPos, zPos],
-          rotY: baseRotY + (Math.random() - 0.5) * 0.15,
-          headTiltX: (Math.random() - 0.5) * 0.1,
-          headTiltZ: side * (-0.06 - Math.random() * 0.08),
-          jacketColor: jacketPalettes[Math.floor(Math.random() * jacketPalettes.length)],
-          pantsColor: pantsPalettes[Math.floor(Math.random() * pantsPalettes.length)],
-          skinColor: skinTones[skinIdx],
-          eyeColor: eyeColors[Math.floor(Math.random() * eyeColors.length)],
-          lipColor: lipColors[skinIdx % lipColors.length],
-          hairColor: hairColors[Math.floor(Math.random() * hairColors.length)],
-          hairStyle: hairStyles[Math.floor(Math.random() * hairStyles.length)],
-          hasGlasses: Math.random() > 0.65, // More spectators have open human eyes
-          isHoldingPhone: Math.random() > 0.38,
-          phoneColor: phoneColors[Math.floor(Math.random() * phoneColors.length)],
-          isStanding: false,
-          scale: 0.94 + Math.random() * 0.08,
-        });
-      }
-
-      // Row 2: Elevated Seated Editors & Stylists
-      // X = side * 1.78, Y = -0.26
-      for (let z = -3.9; z <= 3.3; z += 0.44) {
-        const xPos = side * (1.76 + Math.random() * 0.06);
-        const yPos = -0.26;
-        const zPos = z + 0.2 + (Math.random() - 0.5) * 0.05; // Staggered between row 1 gaps
-
         const baseRotY = side > 0 ? -Math.PI / 2 - 0.22 : Math.PI / 2 + 0.22;
         const skinIdx = Math.floor(Math.random() * skinTones.length);
 
         list.push({
           pos: [xPos, yPos, zPos],
-          rotY: baseRotY + (Math.random() - 0.5) * 0.15,
-          headTiltX: (Math.random() - 0.5) * 0.12,
-          headTiltZ: side * (-0.06 - Math.random() * 0.08),
+          rotY: baseRotY + (Math.random() - 0.5) * 0.12,
+          headTiltX: (Math.random() - 0.5) * 0.08,
+          headTiltZ: side * (-0.05 - Math.random() * 0.06),
           jacketColor: jacketPalettes[Math.floor(Math.random() * jacketPalettes.length)],
           pantsColor: pantsPalettes[Math.floor(Math.random() * pantsPalettes.length)],
           skinColor: skinTones[skinIdx],
-          eyeColor: eyeColors[Math.floor(Math.random() * eyeColors.length)],
-          lipColor: lipColors[skinIdx % lipColors.length],
+          eyeColor: "#111111",
+          lipColor: "#B57666",
           hairColor: hairColors[Math.floor(Math.random() * hairColors.length)],
-          hairStyle: hairStyles[Math.floor(Math.random() * hairStyles.length)],
-          hasGlasses: Math.random() > 0.7,
-          isHoldingPhone: Math.random() > 0.45,
+          hairStyle: "crop",
+          hasGlasses: Math.random() > 0.45,
+          isHoldingPhone: Math.random() > 0.38,
           phoneColor: phoneColors[Math.floor(Math.random() * phoneColors.length)],
           isStanding: false,
           scale: 0.95 + Math.random() * 0.08,
         });
       }
 
-      // Row 3: Elevated Seated Buyers & Industry Guests
-      // X = side * 2.18, Y = -0.08
-      for (let z = -3.7; z <= 3.1; z += 0.46) {
-        const xPos = side * (2.16 + Math.random() * 0.06);
-        const yPos = -0.08;
-        const zPos = z + (Math.random() - 0.5) * 0.05;
-
+      // Row 2: Elevated Row — Fashion Editors & VIPs
+      for (let z = -3.3; z <= 2.9; z += 0.66) {
+        const xPos = side * (1.82 + (Math.random() - 0.5) * 0.04);
+        const yPos = -0.26;
+        const zPos = z + 0.3;
         const baseRotY = side > 0 ? -Math.PI / 2 - 0.18 : Math.PI / 2 + 0.18;
         const skinIdx = Math.floor(Math.random() * skinTones.length);
 
         list.push({
           pos: [xPos, yPos, zPos],
-          rotY: baseRotY + (Math.random() - 0.5) * 0.15,
-          headTiltX: (Math.random() - 0.5) * 0.12,
-          headTiltZ: side * (-0.06 - Math.random() * 0.08),
+          rotY: baseRotY + (Math.random() - 0.5) * 0.12,
+          headTiltX: (Math.random() - 0.5) * 0.08,
+          headTiltZ: side * (-0.05 - Math.random() * 0.06),
           jacketColor: jacketPalettes[Math.floor(Math.random() * jacketPalettes.length)],
           pantsColor: pantsPalettes[Math.floor(Math.random() * pantsPalettes.length)],
           skinColor: skinTones[skinIdx],
-          eyeColor: eyeColors[Math.floor(Math.random() * eyeColors.length)],
-          lipColor: lipColors[skinIdx % lipColors.length],
+          eyeColor: "#111111",
+          lipColor: "#B57666",
           hairColor: hairColors[Math.floor(Math.random() * hairColors.length)],
-          hairStyle: hairStyles[Math.floor(Math.random() * hairStyles.length)],
-          hasGlasses: Math.random() > 0.75,
-          isHoldingPhone: Math.random() > 0.5,
+          hairStyle: "bob",
+          hasGlasses: Math.random() > 0.55,
+          isHoldingPhone: Math.random() > 0.45,
           phoneColor: phoneColors[Math.floor(Math.random() * phoneColors.length)],
           isStanding: false,
           scale: 0.96 + Math.random() * 0.08,
         });
       }
 
-      // Row 4: Standing Press, Photographers & Back Gallery
-      // X = side * 2.58, Y = +0.12
-      for (let z = -3.5; z <= 2.8; z += 0.48) {
-        const xPos = side * (2.56 + Math.random() * 0.06);
-        const yPos = 0.12;
-        const zPos = z + 0.22 + (Math.random() - 0.5) * 0.06;
-
-        const baseRotY = side > 0 ? -Math.PI / 2 - 0.15 : Math.PI / 2 + 0.15;
+      // Row 3: Top Gallery — Press & Photographers
+      for (let z = -3.1; z <= 2.7; z += 0.72) {
+        const xPos = side * (2.26 + (Math.random() - 0.5) * 0.05);
+        const yPos = 0.06;
+        const zPos = z + 0.15;
+        const baseRotY = side > 0 ? -Math.PI / 2 - 0.12 : Math.PI / 2 + 0.12;
         const skinIdx = Math.floor(Math.random() * skinTones.length);
 
         list.push({
           pos: [xPos, yPos, zPos],
-          rotY: baseRotY + (Math.random() - 0.5) * 0.15,
-          headTiltX: (Math.random() - 0.5) * 0.12,
-          headTiltZ: side * (-0.05 - Math.random() * 0.06),
+          rotY: baseRotY + (Math.random() - 0.5) * 0.12,
+          headTiltX: (Math.random() - 0.5) * 0.08,
+          headTiltZ: side * (-0.04 - Math.random() * 0.05),
           jacketColor: jacketPalettes[Math.floor(Math.random() * jacketPalettes.length)],
           pantsColor: pantsPalettes[Math.floor(Math.random() * pantsPalettes.length)],
           skinColor: skinTones[skinIdx],
-          eyeColor: eyeColors[Math.floor(Math.random() * eyeColors.length)],
-          lipColor: lipColors[skinIdx % lipColors.length],
+          eyeColor: "#111111",
+          lipColor: "#B57666",
           hairColor: hairColors[Math.floor(Math.random() * hairColors.length)],
-          hairStyle: hairStyles[Math.floor(Math.random() * hairStyles.length)],
-          hasGlasses: Math.random() > 0.8,
-          isHoldingPhone: Math.random() > 0.35,
+          hairStyle: "textured",
+          hasGlasses: Math.random() > 0.65,
+          isHoldingPhone: Math.random() > 0.5,
           phoneColor: phoneColors[Math.floor(Math.random() * phoneColors.length)],
           isStanding: true,
           scale: 0.98 + Math.random() * 0.08,
@@ -354,51 +298,35 @@ function PackedRunwayAudience() {
     return list;
   }, []);
 
-  // Paparazzi camera flashes popping organically and frequently from both sides of the audience
+  // High-performance single dynamic flash that bursts and moves across audience
   useFrame((_, delta) => {
-    // Rapid natural flash decay
-    flash1Intensity.current = THREE.MathUtils.lerp(flash1Intensity.current, 0, delta * 22);
-    flash2Intensity.current = THREE.MathUtils.lerp(flash2Intensity.current, 0, delta * 22);
-    flash3Intensity.current = THREE.MathUtils.lerp(flash3Intensity.current, 0, delta * 22);
-    flash4Intensity.current = THREE.MathUtils.lerp(flash4Intensity.current, 0, delta * 22);
+    if (flashIntensity.current > 0.05) {
+      flashIntensity.current = THREE.MathUtils.lerp(flashIntensity.current, 0, delta * 24);
+    } else {
+      flashIntensity.current = 0;
+    }
 
-    // High frequency paparazzi trigger rate for authentic fashion week energy
-    if (Math.random() < 0.12) {
-      const bulb = Math.floor(Math.random() * 4);
-      const intensity = 5.2 + Math.random() * 5.8;
-      const side = Math.random() > 0.5 ? 1 : -1;
-      const posX = side * (1.4 + Math.random() * 0.95);
-      const posY = 0.05 + Math.random() * 0.65;
-      const posZ = (Math.random() - 0.5) * 6.8;
-
-      if (bulb === 0 && flash1Ref.current) {
-        flash1Intensity.current = intensity;
-        flash1Ref.current.position.set(posX, posY, posZ);
-      } else if (bulb === 1 && flash2Ref.current) {
-        flash2Intensity.current = intensity;
-        flash2Ref.current.position.set(posX, posY, posZ);
-      } else if (bulb === 2 && flash3Ref.current) {
-        flash3Intensity.current = intensity;
-        flash3Ref.current.position.set(posX, posY, posZ);
-      } else if (bulb === 3 && flash4Ref.current) {
-        flash4Intensity.current = intensity;
-        flash4Ref.current.position.set(posX, posY, posZ);
+    if (Math.random() < 0.09 && flashIntensity.current < 0.1) {
+      flashIntensity.current = 6.0 + Math.random() * 5.0;
+      if (flashRef.current) {
+        const side = Math.random() > 0.5 ? 1 : -1;
+        flashRef.current.position.set(
+          side * (1.45 + Math.random() * 0.8),
+          0.1 + Math.random() * 0.5,
+          (Math.random() - 0.5) * 6.0
+        );
       }
     }
 
-    if (flash1Ref.current) flash1Ref.current.intensity = flash1Intensity.current;
-    if (flash2Ref.current) flash2Ref.current.intensity = flash2Intensity.current;
-    if (flash3Ref.current) flash3Ref.current.intensity = flash3Intensity.current;
-    if (flash4Ref.current) flash4Ref.current.intensity = flash4Intensity.current;
+    if (flashRef.current) {
+      flashRef.current.intensity = flashIntensity.current;
+    }
   });
 
   return (
     <group>
-      {/* High-Impact Multi-Source Paparazzi Camera Flashes */}
-      <pointLight ref={flash1Ref} color="#FFFFFF" intensity={0} distance={11} decay={2} />
-      <pointLight ref={flash2Ref} color="#EBF4FF" intensity={0} distance={10} decay={2} />
-      <pointLight ref={flash3Ref} color="#FFF8F0" intensity={0} distance={11} decay={2} />
-      <pointLight ref={flash4Ref} color="#FFFFFF" intensity={0} distance={10} decay={2} />
+      {/* High-Performance Paparazzi Camera Flash Point Light */}
+      <pointLight ref={flashRef} color="#FFFFFF" intensity={0} distance={9} decay={2} />
 
       {/* Tiered Gallery Seating Benches on Both Sides */}
       {/* Row 1 Benches */}
@@ -441,7 +369,7 @@ function PackedRunwayAudience() {
         <meshStandardMaterial color="#100F0E" roughness={0.6} />
       </mesh>
 
-      {/* Realistic Curved Human Spectators (120+ Head Count) */}
+      {/* High-Performance Spectators (Streamlined 4-5 meshes per spectator, NO shadow map passes) */}
       {spectators.map((s, idx) => (
         <group
           key={`spectator-${idx}`}
@@ -449,377 +377,76 @@ function PackedRunwayAudience() {
           rotation={[0, s.rotY, 0]}
           scale={s.scale}
         >
-          {/* ================= 1. CURVED LOWER BODY ================= */}
+          {/* Lower Body */}
           {!s.isStanding ? (
-            /* Natural Seated Posture with Smooth Curved Thighs & Knees */
-            <group>
-              {/* Rounded Curving Pelvis & Hips */}
-              <mesh position={[0, -0.02, 0]} castShadow>
-                <sphereGeometry args={[0.11, 14, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-
-              {/* Left Thigh (Curved forward capsule) */}
-              <mesh
-                position={[-0.055, -0.06, 0.11]}
-                rotation={[Math.PI / 2 - 0.12, 0, -0.05]}
-                castShadow
-              >
-                <capsuleGeometry args={[0.048, 0.18, 8, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-
-              {/* Right Thigh (Curved forward capsule) */}
-              <mesh
-                position={[0.055, -0.06, 0.11]}
-                rotation={[Math.PI / 2 - 0.12, 0, 0.05]}
-                castShadow
-              >
-                <capsuleGeometry args={[0.048, 0.18, 8, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-
-              {/* Left Lower Leg / Shin descending from knee */}
-              <mesh position={[-0.055, -0.22, 0.21]} rotation={[0.12, 0, 0]} castShadow>
-                <capsuleGeometry args={[0.042, 0.16, 8, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-
-              {/* Right Lower Leg / Shin descending from knee */}
-              <mesh position={[0.055, -0.22, 0.21]} rotation={[0.12, 0, 0]} castShadow>
-                <capsuleGeometry args={[0.042, 0.16, 8, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-
-              {/* Designer Loafers / Boots */}
-              <mesh position={[-0.055, -0.32, 0.25]}>
-                <boxGeometry args={[0.05, 0.04, 0.1]} />
-                <meshStandardMaterial color="#111111" roughness={0.3} metalness={0.2} />
-              </mesh>
-              <mesh position={[0.055, -0.32, 0.25]}>
-                <boxGeometry args={[0.05, 0.04, 0.1]} />
-                <meshStandardMaterial color="#111111" roughness={0.3} metalness={0.2} />
-              </mesh>
-            </group>
+            <mesh position={[0, -0.16, 0.12]} rotation={[Math.PI / 2.3, 0, 0]}>
+              <capsuleGeometry args={[0.072, 0.26, 6, 8]} />
+              <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
+            </mesh>
           ) : (
-            /* Standing Posture with Curved Legs */
-            <group>
-              <mesh position={[-0.055, -0.24, 0]} castShadow>
-                <capsuleGeometry args={[0.048, 0.44, 8, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-              <mesh position={[0.055, -0.24, 0]} castShadow>
-                <capsuleGeometry args={[0.048, 0.44, 8, 12]} />
-                <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
-              </mesh>
-              <mesh position={[-0.055, -0.48, 0.04]}>
-                <boxGeometry args={[0.05, 0.04, 0.1]} />
-                <meshStandardMaterial color="#111111" roughness={0.3} metalness={0.2} />
-              </mesh>
-              <mesh position={[0.055, -0.48, 0.04]}>
-                <boxGeometry args={[0.05, 0.04, 0.1]} />
-                <meshStandardMaterial color="#111111" roughness={0.3} metalness={0.2} />
-              </mesh>
-            </group>
+            <mesh position={[0, -0.22, 0]}>
+              <capsuleGeometry args={[0.076, 0.44, 6, 8]} />
+              <meshStandardMaterial color={s.pantsColor} roughness={0.65} />
+            </mesh>
           )}
 
-          {/* ================= 2. CURVED UPPER BODY & TAILORED JACKET ================= */}
-          {/* Contoured Torso with Tapered Waist */}
-          <mesh position={[0, 0.12, 0]} castShadow>
-            <capsuleGeometry args={[0.095, 0.2, 10, 14]} />
-            <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
+          {/* Shoes */}
+          <mesh position={[0, s.isStanding ? -0.46 : -0.32, s.isStanding ? 0.04 : 0.24]}>
+            <boxGeometry args={[0.13, 0.05, 0.12]} />
+            <meshStandardMaterial color="#0A0A0A" roughness={0.3} metalness={0.4} />
           </mesh>
 
-          {/* Natural Curved Shoulders (Horizontal Capsule) */}
-          <mesh position={[0, 0.21, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-            <capsuleGeometry args={[0.052, 0.24, 8, 12]} />
-            <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
+          {/* Torso & Tailored Jacket */}
+          <mesh position={[0, 0.13, 0]}>
+            <capsuleGeometry args={[0.098, 0.22, 6, 8]} />
+            <meshStandardMaterial color={s.jacketColor} roughness={0.55} />
           </mesh>
 
-          {/* Shirt / Lapel Accent */}
-          <mesh position={[0, 0.18, 0.07]}>
-            <boxGeometry args={[0.06, 0.14, 0.03]} />
-            <meshStandardMaterial color="#EAE7DF" roughness={0.7} />
-          </mesh>
-
-          {/* ================= 3. DETAILED REALISTIC ARMS & HANDS ================= */}
+          {/* Arms & Interactive Smartphone */}
           {s.isHoldingPhone ? (
-            /* Spectator holding smartphone up recording the catwalk */
             <group>
-              {/* Left arm relaxed with detailed resting hand on lap */}
-              <group position={[-0.12, 0.08, 0.04]} rotation={[0.2, 0, 0.08]}>
-                <mesh>
-                  <capsuleGeometry args={[0.034, 0.22, 6, 8]} />
-                  <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
-                </mesh>
-                {/* Left Hand: Wrist, Palm & Articulated Resting Fingers */}
-                <group position={[0, -0.13, 0.04]} rotation={[0.4, 0, 0]}>
-                  {/* Palm */}
-                  <mesh>
-                    <boxGeometry args={[0.032, 0.012, 0.038]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-                  {/* 4 Gently Curled Fingers */}
-                  {[-0.012, -0.004, 0.004, 0.012].map((fX, fIdx) => (
-                    <mesh key={`lfinger-${fIdx}`} position={[fX, -0.006, 0.024]} rotation={[0.6, 0, 0]}>
-                      <capsuleGeometry args={[0.0036, 0.016, 4, 6]} />
-                      <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                    </mesh>
-                  ))}
-                  {/* Thumb */}
-                  <mesh position={[0.018, 0.002, 0.01]} rotation={[0.2, 0.3, 0.5]}>
-                    <capsuleGeometry args={[0.004, 0.014, 4, 6]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-                </group>
-              </group>
-
-              {/* Right arm raised holding smartphone toward the runway */}
-              <group>
-                {/* Upper arm */}
-                <mesh position={[0.11, 0.14, 0.06]} rotation={[0.42, 0, -0.18]}>
-                  <capsuleGeometry args={[0.034, 0.14, 6, 8]} />
-                  <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
-                </mesh>
-                {/* Forearm angled up */}
-                <mesh position={[0.1, 0.23, 0.15]} rotation={[-0.6, 0, -0.12]}>
-                  <capsuleGeometry args={[0.032, 0.14, 6, 8]} />
-                  <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
-                </mesh>
-
-                {/* Right Hand Grasping the Phone */}
-                <group position={[0.09, 0.29, 0.22]}>
-                  {/* Palm cradling back/bottom of phone */}
-                  <mesh position={[0, 0, -0.012]} rotation={[-0.3, -0.2, 0]}>
-                    <boxGeometry args={[0.034, 0.036, 0.014]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-
-                  {/* Thumb gripping the right side of phone */}
-                  <mesh position={[0.024, 0.006, 0.005]} rotation={[-0.2, -0.3, -0.4]}>
-                    <capsuleGeometry args={[0.0042, 0.018, 4, 6]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-
-                  {/* 4 Articulated Fingers wrapping around the left edge of phone */}
-                  {[-0.015, -0.005, 0.005, 0.015].map((fY, fIdx) => (
-                    <mesh key={`rfinger-${fIdx}`} position={[-0.022, fY, 0.004]} rotation={[0, 0.5, 0.3]}>
-                      <capsuleGeometry args={[0.0038, 0.016, 4, 6]} />
-                      <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                    </mesh>
-                  ))}
-
-                  {/* Sleek Smartphone */}
-                  <mesh position={[0, 0.02, 0.012]} rotation={[-0.3, -0.2, 0]}>
-                    <boxGeometry args={[0.046, 0.082, 0.006]} />
-                    <meshStandardMaterial color="#0F0E0E" roughness={0.15} metalness={0.85} />
-                  </mesh>
-                  {/* Phone Camera Lens module on backside facing runway */}
-                  <mesh position={[-0.012, 0.046, 0.016]} rotation={[-0.3, -0.2, 0]}>
-                    <cylinderGeometry args={[0.004, 0.004, 0.003, 8]} />
-                    <meshStandardMaterial color="#222" roughness={0.1} metalness={0.9} />
-                  </mesh>
-                  {/* Glowing Screen on front side facing spectator */}
-                  <mesh position={[0, 0.02, 0.008]} rotation={[-0.3, -0.2, 0]}>
-                    <planeGeometry args={[0.042, 0.076]} />
-                    <meshBasicMaterial color={s.phoneColor} />
-                  </mesh>
-                </group>
-              </group>
+              <mesh position={[0.08, 0.14, 0.12]} rotation={[1.1, 0.2, -0.3]}>
+                <capsuleGeometry args={[0.034, 0.2, 4, 6]} />
+                <meshStandardMaterial color={s.jacketColor} roughness={0.55} />
+              </mesh>
+              {/* Glowing Smartphone Screen */}
+              <mesh position={[0.12, 0.26, 0.22]} rotation={[-0.3, -0.2, 0]}>
+                <boxGeometry args={[0.038, 0.07, 0.012]} />
+                <meshBasicMaterial color={s.phoneColor} />
+              </mesh>
             </group>
           ) : (
-            /* Both hands resting with realistic palms and fingers */
             <group>
-              {/* Left arm & hand */}
-              <group position={[-0.12, 0.08, 0.04]} rotation={[0.2, 0, 0.08]}>
-                <mesh>
-                  <capsuleGeometry args={[0.034, 0.24, 6, 8]} />
-                  <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
-                </mesh>
-                <group position={[0, -0.14, 0.05]} rotation={[0.45, 0, 0]}>
-                  {/* Palm */}
-                  <mesh>
-                    <boxGeometry args={[0.032, 0.012, 0.038]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-                  {/* Fingers */}
-                  {[-0.012, -0.004, 0.004, 0.012].map((fX, fIdx) => (
-                    <mesh key={`nlfinger-${fIdx}`} position={[fX, -0.006, 0.024]} rotation={[0.6, 0, 0]}>
-                      <capsuleGeometry args={[0.0036, 0.016, 4, 6]} />
-                      <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                    </mesh>
-                  ))}
-                  {/* Thumb */}
-                  <mesh position={[0.018, 0.002, 0.01]} rotation={[0.2, 0.3, 0.5]}>
-                    <capsuleGeometry args={[0.004, 0.014, 4, 6]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-                </group>
-              </group>
-
-              {/* Right arm & hand */}
-              <group position={[0.12, 0.08, 0.04]} rotation={[0.2, 0, -0.08]}>
-                <mesh>
-                  <capsuleGeometry args={[0.034, 0.24, 6, 8]} />
-                  <meshStandardMaterial color={s.jacketColor} roughness={0.6} />
-                </mesh>
-                <group position={[0, -0.14, 0.05]} rotation={[0.45, 0, 0]}>
-                  {/* Palm */}
-                  <mesh>
-                    <boxGeometry args={[0.032, 0.012, 0.038]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-                  {/* Fingers */}
-                  {[-0.012, -0.004, 0.004, 0.012].map((fX, fIdx) => (
-                    <mesh key={`nrfinger-${fIdx}`} position={[fX, -0.006, 0.024]} rotation={[0.6, 0, 0]}>
-                      <capsuleGeometry args={[0.0036, 0.016, 4, 6]} />
-                      <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                    </mesh>
-                  ))}
-                  {/* Thumb */}
-                  <mesh position={[-0.018, 0.002, 0.01]} rotation={[0.2, -0.3, -0.5]}>
-                    <capsuleGeometry args={[0.004, 0.014, 4, 6]} />
-                    <meshStandardMaterial color={s.skinColor} roughness={0.5} />
-                  </mesh>
-                </group>
-              </group>
+              <mesh position={[-0.12, 0.08, 0.04]} rotation={[0.25, 0, 0.1]}>
+                <capsuleGeometry args={[0.034, 0.22, 4, 6]} />
+                <meshStandardMaterial color={s.jacketColor} roughness={0.55} />
+              </mesh>
+              <mesh position={[0.12, 0.08, 0.04]} rotation={[0.25, 0, -0.1]}>
+                <capsuleGeometry args={[0.034, 0.22, 4, 6]} />
+                <meshStandardMaterial color={s.jacketColor} roughness={0.55} />
+              </mesh>
             </group>
           )}
 
-          {/* ================= 4. DETAILED HUMAN FACE WITH REALISTIC EYES ================= */}
-          {/* Neck */}
-          <mesh position={[0, 0.27, 0]}>
-            <cylinderGeometry args={[0.036, 0.042, 0.07, 8]} />
-            <meshStandardMaterial color={s.skinColor} roughness={0.55} />
-          </mesh>
-
-          {/* Natural Human Proportioned Head */}
-          <group position={[0, 0.36, 0]} rotation={[s.headTiltX, 0, s.headTiltZ]}>
-            {/* Base Sculpted Head */}
-            <mesh castShadow>
-              <sphereGeometry args={[0.072, 16, 16]} />
+          {/* Sculpted Head & Skin Tone */}
+          <group position={[0, 0.35, 0]} rotation={[s.headTiltX, 0, s.headTiltZ]}>
+            <mesh>
+              <sphereGeometry args={[0.074, 8, 8]} />
               <meshStandardMaterial color={s.skinColor} roughness={0.5} />
             </mesh>
 
-            {/* Left & Right Ears */}
-            <mesh position={[-0.071, 0, 0]} rotation={[0, -0.2, 0]}>
-              <capsuleGeometry args={[0.007, 0.02, 4, 6]} />
-              <meshStandardMaterial color={s.skinColor} roughness={0.55} />
-            </mesh>
-            <mesh position={[0.071, 0, 0]} rotation={[0, 0.2, 0]}>
-              <capsuleGeometry args={[0.007, 0.02, 4, 6]} />
-              <meshStandardMaterial color={s.skinColor} roughness={0.55} />
+            {/* Haute Couture Hair Volume */}
+            <mesh position={[0, 0.02, -0.01]} scale={[1.04, 1.08, 1.05]}>
+              <sphereGeometry args={[0.075, 8, 8]} />
+              <meshStandardMaterial color={s.hairColor} roughness={0.8} />
             </mesh>
 
-            {/* Nose Bridge & Tip */}
-            <mesh position={[0, -0.004, 0.072]} rotation={[0.2, 0, 0]}>
-              <boxGeometry args={[0.011, 0.024, 0.012]} />
-              <meshStandardMaterial color={s.skinColor} roughness={0.55} />
-            </mesh>
-
-            {/* Lips / Mouth */}
-            <mesh position={[0, -0.026, 0.067]}>
-              <boxGeometry args={[0.022, 0.005, 0.006]} />
-              <meshStandardMaterial color={s.lipColor} roughness={0.45} />
-            </mesh>
-
-            {/* ================= DETAILED HUMAN EYES ================= */}
-            {/* Left Eye */}
-            <group position={[-0.024, 0.009, 0.065]}>
-              {/* Sclera (Eye White) */}
-              <mesh>
-                <sphereGeometry args={[0.0075, 8, 8]} />
-                <meshStandardMaterial color="#FFFFFF" roughness={0.2} />
-              </mesh>
-              {/* Iris & Pupil (Focused inward toward the catwalk) */}
-              <mesh position={[0, 0, 0.004]}>
-                <sphereGeometry args={[0.0044, 8, 8]} />
-                <meshStandardMaterial color={s.eyeColor} roughness={0.1} />
-              </mesh>
-              {/* Eyelid / Lash Line */}
-              <mesh position={[0, 0.006, 0.002]} rotation={[0, 0, 0.05]}>
-                <boxGeometry args={[0.016, 0.0028, 0.004]} />
-                <meshStandardMaterial color="#161413" roughness={0.8} />
-              </mesh>
-              {/* Eyebrow */}
-              <mesh position={[0, 0.015, 0.002]} rotation={[0, 0, -0.08]}>
-                <boxGeometry args={[0.019, 0.0035, 0.004]} />
-                <meshStandardMaterial color={s.hairColor} roughness={0.9} />
-              </mesh>
-            </group>
-
-            {/* Right Eye */}
-            <group position={[0.024, 0.009, 0.065]}>
-              {/* Sclera (Eye White) */}
-              <mesh>
-                <sphereGeometry args={[0.0075, 8, 8]} />
-                <meshStandardMaterial color="#FFFFFF" roughness={0.2} />
-              </mesh>
-              {/* Iris & Pupil (Focused inward toward the catwalk) */}
-              <mesh position={[0, 0, 0.004]}>
-                <sphereGeometry args={[0.0044, 8, 8]} />
-                <meshStandardMaterial color={s.eyeColor} roughness={0.1} />
-              </mesh>
-              {/* Eyelid / Lash Line */}
-              <mesh position={[0, 0.006, 0.002]} rotation={[0, 0, -0.05]}>
-                <boxGeometry args={[0.016, 0.0028, 0.004]} />
-                <meshStandardMaterial color="#161413" roughness={0.8} />
-              </mesh>
-              {/* Eyebrow */}
-              <mesh position={[0, 0.015, 0.002]} rotation={[0, 0, 0.08]}>
-                <boxGeometry args={[0.019, 0.0035, 0.004]} />
-                <meshStandardMaterial color={s.hairColor} roughness={0.9} />
-              </mesh>
-            </group>
-
-            {/* Diverse High-Fashion Hairstyles */}
-            {s.hairStyle === "crop" && (
-              <mesh position={[0, 0.025, -0.01]} castShadow>
-                <sphereGeometry args={[0.076, 14, 14]} />
-                <meshStandardMaterial color={s.hairColor} roughness={0.8} />
-              </mesh>
-            )}
-            {s.hairStyle === "bun" && (
-              <group>
-                <mesh position={[0, 0.02, -0.01]} castShadow>
-                  <sphereGeometry args={[0.075, 14, 14]} />
-                  <meshStandardMaterial color={s.hairColor} roughness={0.8} />
-                </mesh>
-                <mesh position={[0, 0.075, -0.03]} castShadow>
-                  <sphereGeometry args={[0.032, 12, 12]} />
-                  <meshStandardMaterial color={s.hairColor} roughness={0.8} />
-                </mesh>
-              </group>
-            )}
-            {s.hairStyle === "bob" && (
-              <mesh position={[0, 0.005, -0.015]} scale={[1.06, 1.15, 1.08]} castShadow>
-                <sphereGeometry args={[0.074, 14, 14]} />
-                <meshStandardMaterial color={s.hairColor} roughness={0.8} />
-              </mesh>
-            )}
-            {s.hairStyle === "textured" && (
-              <mesh position={[0, 0.03, -0.005]} scale={[1.04, 1.12, 1.04]} castShadow>
-                <sphereGeometry args={[0.076, 14, 14]} />
-                <meshStandardMaterial color={s.hairColor} roughness={0.9} />
-              </mesh>
-            )}
-
-            {/* Front-Row VIP Designer Sunglasses */}
+            {/* Front-Row VIP Sunglasses */}
             {s.hasGlasses && (
-              <group position={[0, 0.009, 0.07]}>
-                <mesh>
-                  <boxGeometry args={[0.082, 0.022, 0.012]} />
-                  <meshStandardMaterial color="#0A0A0A" roughness={0.15} metalness={0.8} />
-                </mesh>
-                <mesh position={[-0.024, 0, 0.007]}>
-                  <planeGeometry args={[0.028, 0.018]} />
-                  <meshStandardMaterial color="#111111" roughness={0.08} metalness={0.95} />
-                </mesh>
-                <mesh position={[0.024, 0, 0.007]}>
-                  <planeGeometry args={[0.028, 0.018]} />
-                  <meshStandardMaterial color="#111111" roughness={0.08} metalness={0.95} />
-                </mesh>
-              </group>
+              <mesh position={[0, 0.01, 0.072]}>
+                <boxGeometry args={[0.085, 0.024, 0.018]} />
+                <meshBasicMaterial color="#0A0A0A" />
+              </mesh>
             )}
           </group>
         </group>
@@ -1029,6 +656,18 @@ function RunwayCatwalk({ mouse }: ModelProps) {
 
 export default function Hero3DRunway() {
   const mouse = useRef({ x: 0, y: 0 });
+  const [isInView, setIsInView] = useState(true);
+
+  // High-performance visibility check: pause 3D loop completely when user scrolls past hero
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolledPast = window.scrollY > window.innerHeight * 1.15;
+      setIsInView(!scrolledPast);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -1044,11 +683,14 @@ export default function Hero3DRunway() {
     >
       <Canvas
         shadows
-        dpr={[1, 1.75]}
+        frameloop={isInView ? "always" : "never"}
+        dpr={[1, 1.25]}
+        performance={{ min: 0.5 }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",
+          stencil: false,
         }}
         camera={{ position: [0, 0.58, 4.3], fov: 41 }}
       >
