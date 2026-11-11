@@ -8,6 +8,7 @@
 - **100% Seamless Infinite Marquee**: 54 items in 2 identical 27-item cycles translating `0%` to `-50%` continuously without gaps or hitches.
 - **Sequential Reticle Animations**: When inspected, garment smoothly lifts forward (`garmentStageEnter`). Callouts no longer appear instantly; reticle dots pop open, leader lines draw outward (`scaleX(0)` to `scaleX(1)`), and concise badges slide in sequentially per target with staggered timing.
 - **Zero Title Overlap**: "Latest Collection" title automatically fades and translates away while garment is inspected.
+- **Fixed Missing Asset**: Resolved 404 on `tshirt-cross-flesh.png` for Edition 09 ("DE PROFUNDIS FLESH CROSS TEE"), fixing broken image icon and restoring graphic and reticle alignment.
 - **Production Build**: `npm run build` passing 100% with zero errors.
 
 ## Architecture & Subsystems
