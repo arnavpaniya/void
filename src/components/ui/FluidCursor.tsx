@@ -78,7 +78,7 @@ export function FluidCursor() {
       {/* Central Fluid Precision Dot */}
       <div
         ref={dotRef}
-        className={`fixed top-0 left-0 -ml-1 -mt-1 w-2 h-2 rounded-full bg-white pointer-events-none z-[9999] mix-blend-difference transition-opacity duration-300 ${
+        className={`fixed top-0 left-0 -ml-1 -mt-1 w-2 h-2 rounded-full bg-white pointer-events-none z-9999 mix-blend-difference transition-opacity duration-300 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
         style={{ willChange: "transform" }}
@@ -87,7 +87,7 @@ export function FluidCursor() {
       {/* Trailing Physics Ring with Dynamic Aura */}
       <div
         ref={ringRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9998] mix-blend-difference flex items-center justify-center transition-all duration-300 ease-out ${
+        className={`fixed top-0 left-0 pointer-events-none z-9998 mix-blend-difference flex items-center justify-center transition-all duration-300 ease-out ${
           isVisible ? "opacity-100" : "opacity-0"
         } ${
           isHovered
