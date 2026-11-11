@@ -3,6 +3,7 @@ import "./globals.css";
 import { SoundtrackProvider } from "@/components/audio/SoundtrackPlayer";
 import { FluidCursor } from "@/components/ui/FluidCursor";
 import { SideDeveloperBadge } from "@/components/navigation/SideDeveloperBadge";
+import { ThreeWarningFilter } from "@/components/canvas/ThreeWarningFilter";
 
 export const metadata: Metadata = {
   title: "VOID — Heavyweight Graphic Apparel",
@@ -44,6 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#0E0D0C] text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-neutral-800 selection:text-white">
+        <ThreeWarningFilter />
         <SoundtrackProvider>
           <FluidCursor />
           <SideDeveloperBadge />

@@ -15,6 +15,7 @@ import { TopDripCarousel } from "@/components/commerce/TopDripCarousel";
 import { TrendingSection } from "@/components/commerce/TrendingSection";
 import { TiltedProductCarousel } from "@/components/commerce/TiltedProductCarousel";
 import { NewsletterSection } from "@/components/commerce/NewsletterSection";
+import { GarmentRackSection } from "@/components/commerce/GarmentRackSection";
 import { FaqSection } from "@/components/editorial/FaqSection";
 import { VoidFooter } from "@/components/commerce/VoidFooter";
 import { ArrowDown } from "lucide-react";
@@ -177,6 +178,14 @@ export default function Home() {
         <LuxuryStreetwearHero
           onQuickAdd={handleAddToCart}
           onOpenVideoModal={() => setVideoModalOpen(true)}
+          currency={currency}
+        />
+      </section>
+
+      {/* Industrial Garment Rack: Continuous Conveyor with 3D Hangers on High-Tensile Steel Rod */}
+      <section id="rack" className="relative w-full">
+        <GarmentRackSection
+          onQuickAdd={handleAddToCart}
           currency={currency}
         />
       </section>

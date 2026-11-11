@@ -74,6 +74,67 @@ body {
   animation: marqueeRight 30s linear infinite;
 }
 
+/* Continuous 3D Rack Sliding Conveyor */
+@keyframes rackMarqueeSlide {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Garment Inspection Stage Entrance */
+@keyframes garmentStageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1.1);
+  }
+}
+
+/* Radar Reticle Dot Pop */
+@keyframes reticleDotPop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Radar Leader Line Draw */
+@keyframes reticleLineDraw {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Radar Badge Reveal */
+@keyframes reticleBadgeReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--badge-slide-from, -8px));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .font-editorial-serif {
   font-family: "Playfair Display", Didot, "Bodoni MT", Garamond, serif;
 }

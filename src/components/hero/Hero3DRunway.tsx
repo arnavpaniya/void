@@ -682,7 +682,7 @@ export default function Hero3DRunway() {
       onPointerMove={handlePointerMove}
     >
       <Canvas
-        shadows
+        shadows={{ type: THREE.PCFShadowMap }}
         frameloop={isInView ? "always" : "never"}
         dpr={[1, 1.25]}
         performance={{ min: 0.5 }}

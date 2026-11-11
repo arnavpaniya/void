@@ -20,7 +20,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { DETAILED_PRODUCTS } from "@/lib/productData";
-import { DetailedProduct, TShirtProductModal } from "@/components/commerce/TShirtProductModal";
+import { DetailedProduct } from "@/components/commerce/TShirtProductModal";
 import { Header } from "@/components/commerce/Header";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { VoidFooter } from "@/components/commerce/VoidFooter";
@@ -106,9 +106,6 @@ export default function ShopPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
-
-  // Inspection modal
-  const [inspectingProduct, setInspectingProduct] = useState<DetailedProduct | null>(null);
 
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
     {
@@ -438,9 +435,9 @@ export default function ShopPage() {
                     image: "/images/products/product_08_liniker_duo.jpg",
                   },
                 ].map((item, i) => (
-                  <div
+                  <Link
                     key={i}
-                    onClick={() => setInspectingProduct(DETAILED_PRODUCTS[i] || DETAILED_PRODUCTS[0])}
+                    href={`/shop/${DETAILED_PRODUCTS[i]?.id || "prod-01"}`}
                     className="flex items-center gap-3.5 p-2 rounded-2xl hover:bg-neutral-100/80 transition-colors cursor-pointer group/item border border-transparent hover:border-black/5"
                   >
                     <div className="relative w-12 h-14 rounded-xl overflow-hidden bg-neutral-200 shrink-0">
@@ -466,7 +463,7 @@ export default function ShopPage() {
                         )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
@@ -525,9 +522,9 @@ export default function ShopPage() {
                     image: "/images/products/product_07_rooster_art_tee.jpg",
                   },
                 ].map((item, i) => (
-                  <div
+                  <Link
                     key={i}
-                    onClick={() => setInspectingProduct(DETAILED_PRODUCTS[i + 1] || DETAILED_PRODUCTS[0])}
+                    href={`/shop/${DETAILED_PRODUCTS[i + 1]?.id || "prod-02"}`}
                     className="flex items-center gap-3.5 p-2 rounded-2xl hover:bg-neutral-100/80 transition-colors cursor-pointer group/item border border-transparent hover:border-black/5"
                   >
                     <div className="relative w-12 h-14 rounded-xl overflow-hidden bg-neutral-200 shrink-0">
@@ -546,7 +543,7 @@ export default function ShopPage() {
                         {item.price}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
@@ -730,32 +727,6 @@ export default function ShopPage() {
           setCartItems((prev) => prev.filter((_, i) => i !== index));
         }}
       />
-
-      {/* Inspection Modal */}
-      {inspectingProduct && (
-        <TShirtProductModal
-          product={inspectingProduct}
-          isOpen={!!inspectingProduct}
-          onClose={() => setInspectingProduct(null)}
-          onAddToCart={(product, size) => {
-            setCartItems((prev) => [
-              ...prev,
-              {
-                edition: {
-                  ...EDITIONS[0],
-                  id: product.id,
-                  name: product.name,
-                  priceINR: product.priceINR,
-                  graphicUrl: product.images[0]?.src || "/images/products/product_01_on_air.jpg",
-                },
-                size,
-                quantity: 1,
-              },
-            ]);
-            setCartOpen(true);
-          }}
-        />
-      )}
 
       {/* Clean Bone Footer */}
       <VoidFooter preset="bone" />

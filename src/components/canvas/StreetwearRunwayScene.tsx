@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useCallback, Suspense, useEffect } from "react";
+import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { CatwalkFloor } from "./CatwalkFloor";
 import { RunwayAudience } from "./RunwayAudience";
@@ -71,7 +72,7 @@ export function StreetwearRunwayScene({
       onPointerLeave={handlePointerUp}
     >
       <Canvas
-        shadows
+        shadows={{ type: THREE.PCFShadowMap }}
         dpr={[1, 1.75]}
         gl={{
           antialias: true,

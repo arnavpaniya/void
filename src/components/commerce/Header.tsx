@@ -141,6 +141,16 @@ export function Header({
               SHOP
             </Link>
             <Link
+              href="/#rack"
+              className={`px-3.5 py-1 rounded-full text-xs font-mono tracking-wider transition-all ${
+                isHeroScreen
+                  ? "text-neutral-700 hover:text-black hover:bg-black/[0.07]"
+                  : "text-neutral-300 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              RACK
+            </Link>
+            <Link
               href="/#trending"
               className={`px-3.5 py-1 rounded-full text-xs font-mono tracking-wider transition-all ${
                 isHeroScreen
@@ -337,6 +347,13 @@ export function Header({
                 >
                   <span>Shop All Drops</span>
                   <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#C6F10E]/20 text-[#C6F10E]">HOT</span>
+                </Link>
+                <Link
+                  href="/#rack"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-neutral-400 transition-colors"
+                >
+                  Couture Rack
                 </Link>
                 <Link
                   href="/#trending"
