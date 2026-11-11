@@ -9,6 +9,11 @@
 - **Sequential Reticle Animations**: When inspected, garment smoothly lifts forward (`garmentStageEnter`). Callouts no longer appear instantly; reticle dots pop open, leader lines draw outward (`scaleX(0)` to `scaleX(1)`), and concise badges slide in sequentially per target with staggered timing.
 - **Zero Title Overlap**: "Latest Collection" title automatically fades and translates away while garment is inspected.
 - **Fixed Missing Asset**: Resolved 404 on `tshirt-cross-flesh.png` for Edition 09 ("DE PROFUNDIS FLESH CROSS TEE"), fixing broken image icon and restoring graphic and reticle alignment.
+- **Fast Open/Close & Multi-Product Switching Fix**:
+  - Implemented `isClosingRef` click-shield cooldown (280ms) preventing rapid clicks when closing from ghost-triggering the paused t-shirt stopped directly underneath the cursor.
+  - Added strict `key={pulledGarment.id}` on inspection container and `key={pulledGarment.frontImage}` on the front `<img>` tag, preventing DOM reuse and browser image decode lag between fast switches.
+  - Preloaded all 9 front graphic images in browser memory on mount for instantaneous switching.
+  - Display full distinctive edition name in hover tooltip over each rail item.
 - **Production Build**: `npm run build` passing 100% with zero errors.
 
 ## Architecture & Subsystems

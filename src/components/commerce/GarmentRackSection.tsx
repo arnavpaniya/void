@@ -355,21 +355,43 @@ export function GarmentRackSection({}: GarmentRackSectionProps) {
 
   const [pulledGarment, setPulledGarment] = useState<RackGarment | null>(null);
   const [hoveredGarmentId, setHoveredGarmentId] = useState<string | null>(null);
+  const isClosingRef = React.useRef(false);
+
+  // Preload all 9 front t-shirt images immediately on mount so switching is instantaneous
+  useEffect(() => {
+    RACK_GARMENTS.forEach((g) => {
+      const img = new Image();
+      img.src = g.frontImage;
+    });
+  }, []);
+
+  // Smooth close with click-shield cooldown to prevent rapid clicks from ghost-opening the item underneath
+  const handleClose = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    isClosingRef.current = true;
+    setPulledGarment(null);
+    setTimeout(() => {
+      isClosingRef.current = false;
+    }, 280);
+  };
 
   // Close on Escape key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && pulledGarment) {
-        setPulledGarment(null);
+        handleClose();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [pulledGarment]);
 
-  const handleGarmentClick = (garment: RackGarment) => {
+  const handleGarmentClick = (garment: RackGarment, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (isClosingRef.current) return; // Prevent ghost click on rapid close
+
     if (pulledGarment?.id === garment.id) {
-      setPulledGarment(null);
+      handleClose();
     } else {
       setPulledGarment(garment);
     }
@@ -432,7 +454,7 @@ export function GarmentRackSection({}: GarmentRackSectionProps) {
                   }}
                   onMouseEnter={() => setHoveredGarmentId(`${garment.id}-${idx}`)}
                   onMouseLeave={() => setHoveredGarmentId(null)}
-                  onClick={() => handleGarmentClick(garment)}
+                  onClick={(e) => handleGarmentClick(garment, e)}
                 >
                   {/* Clean Side-Profile Hanging Garment (Real folds, sleeve draped down, hook over rod) */}
                   <div
@@ -451,10 +473,10 @@ export function GarmentRackSection({}: GarmentRackSectionProps) {
                     />
                   </div>
 
-                  {/* Clean Hover Indicator */}
+                  {/* Clean Hover Indicator Showing Full Distinct Name */}
                   <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50">
-                    <span className="px-2 py-0.5 rounded-full bg-[#111111] text-white text-[9px] font-mono tracking-wider shadow-md">
-                      {garment.name.split(" ")[0]}
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#111111] text-white text-[9px] font-mono tracking-wider shadow-md">
+                      {garment.name}
                     </span>
                   </div>
                 </div>
@@ -467,18 +489,16 @@ export function GarmentRackSection({}: GarmentRackSectionProps) {
         {pulledGarment && (
           <div
             className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#F5F4F0]/70 backdrop-blur-[6px] transition-all duration-500 cursor-pointer pt-6"
-            onClick={() => setPulledGarment(null)}
+            onClick={handleClose}
           >
             {/* The Taken-Out T-Shirt in Same Sizing (Slightly Scaled, Smooth Stage Entrance) */}
             <div
+              key={pulledGarment.id}
               className="relative w-[280px] sm:w-[320px] md:w-[360px] pointer-events-auto my-auto"
               style={{
                 animation: "garmentStageEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
               }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setPulledGarment(null); // Click shirt to hang back
-              }}
+              onClick={handleClose}
             >
               {/* Front Hanger */}
               <div className="w-[170px] sm:w-[190px] mx-auto z-20 relative">
@@ -488,6 +508,7 @@ export function GarmentRackSection({}: GarmentRackSectionProps) {
               {/* T-Shirt Front Image with Full Graphic Art */}
               <div className="relative w-full -mt-5">
                 <img
+                  key={pulledGarment.frontImage}
                   src={pulledGarment.frontImage}
                   alt={pulledGarment.name}
                   className="w-full h-auto max-h-[420px] object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.32)]"
