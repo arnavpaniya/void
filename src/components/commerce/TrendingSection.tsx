@@ -124,10 +124,14 @@ export function TrendingSection({ onQuickAdd }: TrendingSectionProps) {
                 href={`/shop/${product.id}`}
                 onMouseEnter={() => setHoveredCard(product.id)}
                 onMouseLeave={() => setHoveredCard(null)}
+                style={{ position: "relative", display: "block", overflow: "hidden" }}
                 className="group relative flex flex-col justify-between rounded-3xl bg-white border border-black/8 overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_24px_50px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500 cursor-pointer block"
               >
                 {/* 1. Visual Photography Stage */}
-                <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#ECE9E2]">
+                <div
+                  className="relative w-full aspect-[4/5] overflow-hidden bg-[#ECE9E2]"
+                  style={{ position: "relative", width: "100%", aspectRatio: "4/5", overflow: "hidden" }}
+                >
                   {/* Primary Product Photo */}
                   <Image
                     src={primaryImage}
